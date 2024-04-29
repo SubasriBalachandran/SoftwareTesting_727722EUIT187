@@ -12,7 +12,6 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.testng.ITestResult;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import com.aventstack.extentreports.ExtentReports;
@@ -32,7 +31,7 @@ public class AppTest {
      */
     WebDriver driver;
     ExtentReports report;
-    ExtentTest logger;
+    ExtentTest test;
 
     @BeforeMethod
     public void testsetup() {
@@ -48,8 +47,8 @@ public class AppTest {
     //public void shouldAnswerWithTrue(String username,String password) throws Exception {
     @Test
     public void shouldAnswerWithTrue()throws Exception{
-        logger=report.createTest("Test1","This is the first test");
-        logger.log(Status.INFO, "Extent report demo");
+        test=report.createTest("Test1","This is the first test");
+        test.log(Status.INFO, "Extent report demo");
         FileInputStream fs = new FileInputStream("C:\\orange.xlsx");
         XSSFWorkbook workbook = new XSSFWorkbook(fs);
         XSSFSheet login = workbook.getSheet("login");
@@ -65,6 +64,7 @@ public class AppTest {
         Thread.sleep(5000);
         System.out.println(username);
         System.out.println(password);
+        workbook.close();
     }
     // @DataProvider(name="data")
     // public Object[][] fetchData() throws Exception{
@@ -80,14 +80,14 @@ public class AppTest {
     public void closemethod(ITestResult result) throws Exception {
         if(result.getStatus()==ITestResult.FAILURE)
         {
-            logger.log(Status.FAIL,"Testcase Failed: "+result.getName());
+            test.log(Status.FAIL,"Testcase Failed: "+result.getName());
         }
         else if(result.getStatus()==ITestResult.SUCCESS)
         {
-            logger.log(Status.PASS,"Testcase Passed: "+result.getName());
+            test.log(Status.PASS,"Testcase Passed: "+result.getName());
         }
         else{
-            logger.log(Status.SKIP,"skipped"+result.getName());
+            test.log(Status.SKIP,"skipped"+result.getName());
         }
         report.flush();
         driver.quit();

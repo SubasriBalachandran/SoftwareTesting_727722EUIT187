@@ -14,12 +14,15 @@ import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.testng.ITestResult;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import com.aventstack.extentreports.ExtentReports;
 import com.aventstack.extentreports.ExtentTest;
+import com.aventstack.extentreports.Status;
+import com.aventstack.extentreports.reporter.ExtentSparkReporter;
 
 import io.github.bonigarcia.wdm.WebDriverManager;
 
@@ -37,11 +40,13 @@ public class AppTest
 
     @BeforeMethod
     public void setup(){
+        ExtentSparkReporter spark=new ExtentSparkReporter("C:\\Users\\subas\\Documents\\softwaretesingcw\\extendreportscw1\\src");
+        report=new ExtentReports();
+        report.attachReporter(spark);
         WebDriverManager.chromedriver().setup();
         driver=new ChromeDriver();
         driver.get("https://groww.in/");
         driver.manage().window().maximize();
-        report=new ExtentReports();
     }
     // public void screenshot() throws Exception
     // {
@@ -49,7 +54,7 @@ public class AppTest
     @Test
     public void shouldAnswerWithTrue() throws Exception
     {
-        test=report.createTest("Take ScreenShot");
+        test=report.createTest("Take ScreenShot","Test 1");
         JavascriptExecutor js=(JavascriptExecutor) driver;
         js.executeScript( "window.scrollBy(0,500)");
         driver.findElement(By.linkText("Calculators")).click();
@@ -103,8 +108,19 @@ public class AppTest
         }
     }
     @AfterMethod
-    public void closeMethod()
+    public void closeMethod(ITestResult result)throws Exception
     {
+         if(result.getStatus()==ITestResult.FAILURE)
+        {
+            test.log(Status.FAIL,"Testcase Failed: "+result.getName());
+        }
+        else if(result.getStatus()==ITestResult.SUCCESS)
+        {
+            test.log(Status.PASS,"Testcase Passed: "+result.getName());
+        }
+        else{
+            test.log(Status.SKIP,"skipped"+result.getName());
+        }
         report.flush();
         driver.quit();
     }
